@@ -20,16 +20,6 @@ internal class DungeonGenerator
         InitializeMap();
     }
 
-    public string[,] GetMapArray()
-    {
-        return mapArray;
-    }
-
-    public List<DungeonCell> GetRoomList()
-    {
-        return map;
-    }
-
     private void InitializeMap()
     {
         roomLimit = rand.Next((int)(mapWidth * .2f)) + (int)(mapWidth * .1f);
@@ -45,24 +35,29 @@ internal class DungeonGenerator
 
     public void GenerateEmptyMap()
     {
-        var i = 0;
+        int generationAttemptCount;
         var retry = 0;
-        for (i = 0; map.Count < roomLimit; i++)
+        for (generationAttemptCount = 0; map.Count < roomLimit; generationAttemptCount++)
         {
             BuildOutMap();
 
-            if (i - (retry * 100000) > 100000)
+            if (generationAttemptCount - (retry * 100000) > 100000)
             {
                 retry++;
                 InitializeMap();
-                Console.WriteLine($"Failed to generate map a after {i} iterations with size {roomLimit}, retry #{retry}.");
+                Console.WriteLine($"Failed to generate map a after {generationAttemptCount} iterations with size {roomLimit}, retry #{retry}.");
+            }
+
+            if (retry > 100)
+            {
+                Console.WriteLine("Failure to generate map.");
             }
         }
-        Console.WriteLine($"rooms: {roomLimit}, attempts: {i} avg/room: {i / roomLimit}");
+        Console.WriteLine($"rooms: {roomLimit}, attempts: {generationAttemptCount} avg/room: {generationAttemptCount / roomLimit}");
         FillMapArray();
     }
 
-    public void BuildOutMap()
+    private void BuildOutMap()
     {
         while (map.Count <= 0)
         {
@@ -161,13 +156,13 @@ internal class DungeonGenerator
         }
     }
 
-    public int GetOppositeWall(int val)
+    private int GetOppositeWall(int val)
     {
         var oppositeWallLookupList = new List<int>() { 2, 3, 0, 1 };
         return oppositeWallLookupList[val];
     }
 
-    public void FillMapArray()
+    private void FillMapArray()
     {
         for (var i = 0; i < map.Count; i++)
         {
@@ -250,21 +245,16 @@ internal class DungeonGenerator
         {
             for (var j = 1; j < mapHeight - 1; j++)
             {
-                if (mapArray[i, j].CompareTo("|") == 0)
+                if (mapArray[i, j].Equals("|"))
                 {
                     mapArray[i, j] = "#";//hallway
-                    if (mapArray[i - 1, j] == "0")
+                    if (mapArray[i - 1, j].Equals("0"))
                     {
                         mapArray[i - 1, j] = "~";//door
                         mapArray[i + 1, j] = "~";
                     }
-                    //else
-                    //{
-                    //    mapArray[i - 1, j] = "0";//wall
-                    //    mapArray[i + 1, j] = "0";
-                    //}
 
-                    if (mapArray[i, j - 1] == "0")
+                    if (mapArray[i, j - 1].Equals("0"))
                     {
                         mapArray[i, j - 1] = "~";//door
                         mapArray[i, j + 1] = "~";
@@ -275,10 +265,10 @@ internal class DungeonGenerator
                         mapArray[i, j + 1] = "K";
                     }
                 }
-                if (mapArray[i, j].CompareTo("-") == 0)
+                if (mapArray[i, j].Equals("-"))
                 {
                     mapArray[i, j] = "^";//hallway
-                    if (mapArray[i - 1, j] == "0")
+                    if (mapArray[i - 1, j].Equals("0"))
                     {
                         mapArray[i - 1, j] = "~";//door
                         mapArray[i + 1, j] = "~";
@@ -289,16 +279,11 @@ internal class DungeonGenerator
                         mapArray[i + 1, j] = "M";
                     }
 
-                    if (mapArray[i, j - 1] == "0")
+                    if (mapArray[i, j - 1].Equals("0"))
                     {
                         mapArray[i, j - 1] = "~";//door
                         mapArray[i, j + 1] = "~";
                     }
-                    //else
-                    //{
-                    //    mapArray[i, j - 1] = "0";//wall
-                    //    mapArray[i, j + 1] = "0";
-                    //}
                 }
             }
         }
