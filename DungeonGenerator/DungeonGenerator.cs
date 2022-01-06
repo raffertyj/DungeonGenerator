@@ -1,4 +1,6 @@
 ﻿
+using System.Text;
+
 namespace DungeonGenerator;
 
 internal class DungeonGenerator
@@ -51,6 +53,7 @@ internal class DungeonGenerator
             if (retry > 100)
             {
                 Console.WriteLine("Failure to generate map.");
+                break;
             }
         }
         Console.WriteLine($"rooms: {roomLimit}, attempts: {generationAttemptCount} avg/room: {generationAttemptCount / roomLimit}");
@@ -327,13 +330,15 @@ internal class DungeonGenerator
 
     public void PrintMap()
     {
+        var sb = new StringBuilder();
         for (var i = 0; i < mapHeight; i++)
         {
             for (var j = 0; j < mapWidth; j++)
             {
-                Console.Write(mapArray[j, i]);
+                _ = sb.Append(mapArray[j, i]);
             }
-            Console.Write("\n");
+            sb.Append('\n');
         }
+        Console.WriteLine(sb.ToString());
     }
 }
