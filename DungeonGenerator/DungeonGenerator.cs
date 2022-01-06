@@ -80,10 +80,10 @@ internal class DungeonGenerator
         var tempDungeonCell = map[tempIndex];
 
         // all 4 walls already have a room attached to it
-        if (tempDungeonCell.GetAttachedCell(0) != -1 &&
-            tempDungeonCell.GetAttachedCell(1) != -1 &&
-            tempDungeonCell.GetAttachedCell(2) != -1 &&
-            tempDungeonCell.GetAttachedCell(3) != -1)
+        if (tempDungeonCell.AttachedCells[0] != -1 &&
+            tempDungeonCell.AttachedCells[1] != -1 &&
+            tempDungeonCell.AttachedCells[2] != -1 &&
+            tempDungeonCell.AttachedCells[3] != -1)
         {
             return;
         }
@@ -92,7 +92,7 @@ internal class DungeonGenerator
             var whichWall = rand.Next(4);
 
             // search for an empty wall
-            while (tempDungeonCell.GetAttachedCell(whichWall) != -1)
+            while (tempDungeonCell.AttachedCells[whichWall] != -1)
             {
                 whichWall = rand.Next(4);
             }
@@ -216,26 +216,26 @@ internal class DungeonGenerator
             DungeonCell mainRoom = map[i];
 
             // make corridors
-            if (mainRoom.GetAttachedCell(0) != -1 && mainRoom.GetAttachedCell(0) > i)
+            if (mainRoom.AttachedCells[0] != -1 && mainRoom.AttachedCells[0] > i)
             {
-                var attachedRoomN = map[mainRoom.GetAttachedCell(0)];
+                var attachedRoomN = map[mainRoom.AttachedCells[0]];
 
                 mapArray[FindX(mainRoom, attachedRoomN, 0), mainRoom.Y - 1] = "|";
             }
-            if (mainRoom.GetAttachedCell(1) != -1 && mainRoom.GetAttachedCell(1) > i)
+            if (mainRoom.AttachedCells[1] != -1 && mainRoom.AttachedCells[1] > i)
             {
-                var attachedRoomE = map[mainRoom.GetAttachedCell(1)];
+                var attachedRoomE = map[mainRoom.AttachedCells[1]];
                 mapArray[mainRoom.X + mainRoom.Width, FindX(mainRoom, attachedRoomE, 1)] = "-";
             }
-            if (mainRoom.GetAttachedCell(2) != -1 && mainRoom.GetAttachedCell(2) > i)
+            if (mainRoom.AttachedCells[2] != -1 && mainRoom.AttachedCells[2] > i)
             {
-                var attachedRoomS = map[mainRoom.GetAttachedCell(2)];
+                var attachedRoomS = map[mainRoom.AttachedCells[2]];
 
                 mapArray[FindX(mainRoom, attachedRoomS, 0), mainRoom.Y + mainRoom.Height] = "|";
             }
-            if (mainRoom.GetAttachedCell(3) != -1 && mainRoom.GetAttachedCell(3) > i)
+            if (mainRoom.AttachedCells[3] != -1 && mainRoom.AttachedCells[3] > i)
             {
-                var attachedRoomW = map[mainRoom.GetAttachedCell(3)];
+                var attachedRoomW = map[mainRoom.AttachedCells[3]];
                 mapArray[mainRoom.X - 1, FindX(mainRoom, attachedRoomW, 1)] = "-";
             }
         }

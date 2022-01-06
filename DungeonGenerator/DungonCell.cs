@@ -9,25 +9,20 @@ internal class DungeonCell
     public int Height { get; set; }
     public int RoomIndex { get; set; }
 
-    private int[] AttachedCells { get; } //nesw-0123
+    public int[] AttachedCells { get; } //nesw-0123
 
-    public DungeonCell(int x, int y, int width, int height, int idx)
+    public DungeonCell(int x, int y, int width, int height, int index)
     {
-        this.X = x;
-        this.Y = y;
-        this.Width = width;
-        this.Height = height;
+        X = x;
+        Y = y;
+        Width = width;
+        Height = height;
         AttachedCells = new int[4];
         for (int i = 0; i < AttachedCells.Length; i++)
         {
             AttachedCells[i] = -1;
         }
-        this.RoomIndex = idx;
-    }
-
-    public int GetAttachedCell(int i)
-    {
-        return AttachedCells[i];
+        RoomIndex = index;
     }
 
     public void SetAttachedCell(int index, int val)
