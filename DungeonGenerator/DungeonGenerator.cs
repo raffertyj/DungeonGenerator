@@ -34,7 +34,6 @@ internal class DungeonGenerator
     {
         roomLimit = rand.Next((int)(mapWidth * .2f)) + (int)(mapWidth * .1f);
 
-        mapArray = new String[mapWidth, mapHeight];
         for (var i = 0; i < mapHeight; i++)
         {
             for (var j = 0; j < mapWidth; j++)
@@ -48,7 +47,7 @@ internal class DungeonGenerator
     {
         var i = 0;
         var retry = 0;
-        for (i = 0; map.Count() < roomLimit; i++)
+        for (i = 0; map.Count < roomLimit; i++)
         {
             BuildOutMap();
 
@@ -153,7 +152,7 @@ internal class DungeonGenerator
             // add new room to map
             var newRoom = new DungeonCell(newX, newY, newWidth, newHeight, map.Count);
             // set the empty wall to the index of a new room
-            tempDungeonCell.SetAttachedCell(whichWall, map.Count());
+            tempDungeonCell.SetAttachedCell(whichWall, map.Count);
             // set the wall of the new room to be the temp room
             newRoom.SetAttachedCell(GetOppositeWall(whichWall), tempIndex);
 
