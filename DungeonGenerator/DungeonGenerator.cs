@@ -105,22 +105,24 @@ internal class DungeonGenerator
             var newWidth = rand.Next(19) + 10;
             var newHeight = rand.Next(19) + 10;
 
+            var corridorLength = rand.Next(20) + 1;
+
             switch (whichWall)
             {
                 case 0:
-                    newY = tempDungeonCell.Y - 1 - newHeight;
+                    newY = tempDungeonCell.Y - corridorLength - newHeight;
                     newX = rand.Next(tempDungeonCell.Width - 2) + tempDungeonCell.X - 1;
                     break;
                 case 1:
-                    newX = tempDungeonCell.X + tempDungeonCell.Width + 1;
+                    newX = tempDungeonCell.X + tempDungeonCell.Width + corridorLength;
                     newY = rand.Next(tempDungeonCell.Height - 2) + tempDungeonCell.Y - 1;
                     break;
                 case 2:
-                    newY = tempDungeonCell.Y + tempDungeonCell.Height + 1;
+                    newY = tempDungeonCell.Y + tempDungeonCell.Height + corridorLength;
                     newX = rand.Next(tempDungeonCell.Width - 2) + tempDungeonCell.X - 1;
                     break;
                 case 3:
-                    newX = tempDungeonCell.X - 1 - newWidth;
+                    newX = tempDungeonCell.X - corridorLength - newWidth;
                     newY = rand.Next(tempDungeonCell.Height - 2) + tempDungeonCell.Y - 1;
                     break;
                 default:
@@ -173,7 +175,6 @@ internal class DungeonGenerator
             {
                 for (var k = 0; k < map[i].Width; k++)
                 {
-
                     // set actual walls
                     if (j == 0)
                     {
@@ -199,13 +200,13 @@ internal class DungeonGenerator
                     // label center of rooms with i
                     if (k == map[i].Width / 2 && j == map[i].Height / 2)
                     {
-                        //mapArray[map[i].x + k, map[i].y + j] = i.ToString().Substring(0, 1);//Integer.toString(i).substring(0,1);
                         mapArray[map[i].X + k, map[i].Y + j] = "_";
+                        //mapArray[map[i].X + k, map[i].Y + j] = i.ToString().Substring(0, 1);//Integer.toString(i).substring(0,1);
                     }
                     if (k == (map[i].Width / 2) + 1 && j == map[i].Height / 2 && i > 9)
                     {
-                        //mapArray[map[i].x + k, map[i].y + j] = i.ToString().Substring(1, 1);//Integer.toString(i).substring(1,2)
                         mapArray[map[i].X + k, map[i].Y + j] = "_";
+                        //mapArray[map[i].X + k, map[i].Y + j] = i.ToString().Substring(1, 1);//Integer.toString(i).substring(1,2)
                     }
                 }
             }
@@ -223,69 +224,92 @@ internal class DungeonGenerator
             {
                 var attachedRoomN = map[mainRoom.AttachedCells[0]];
 
-                mapArray[FindX(mainRoom, attachedRoomN, 0), mainRoom.Y - 1] = "|";
+                //0,0 is top right
+                var corridorLength = mainRoom.Y - (attachedRoomN.Y + attachedRoomN.Height);
+                var foundX = FindX(mainRoom, attachedRoomN, 0);
+                while (corridorLength > 0)
+                {
+                    mapArray[foundX - 1, mainRoom.Y - corridorLength] = "A";
+                    mapArray[foundX, mainRoom.Y - corridorLength] = "|";
+                    mapArray[foundX + 1, mainRoom.Y - corridorLength] = "D";
+                    corridorLength--;
+                }
             }
             if (mainRoom.AttachedCells[1] != -1 && mainRoom.AttachedCells[1] > i)
             {
                 var attachedRoomE = map[mainRoom.AttachedCells[1]];
-                mapArray[mainRoom.X + mainRoom.Width, FindX(mainRoom, attachedRoomE, 1)] = "-";
+
+                var corridorLength = attachedRoomE.X - (mainRoom.X + mainRoom.Width);
+                var foundX = FindX(mainRoom, attachedRoomE, 1);
+                while (corridorLength > 0)
+                {
+                    mapArray[mainRoom.X + mainRoom.Width - 1 + corridorLength, foundX - 1] = "W";
+                    mapArray[mainRoom.X + mainRoom.Width - 1 + corridorLength, foundX] = "-";
+                    mapArray[mainRoom.X + mainRoom.Width - 1 + corridorLength, foundX + 1] = "X";
+                    corridorLength--;
+                }
             }
             if (mainRoom.AttachedCells[2] != -1 && mainRoom.AttachedCells[2] > i)
             {
                 var attachedRoomS = map[mainRoom.AttachedCells[2]];
 
-                mapArray[FindX(mainRoom, attachedRoomS, 0), mainRoom.Y + mainRoom.Height] = "|";
+                var corridorLength = attachedRoomS.Y - (mainRoom.Y + mainRoom.Height);
+                var foundX = FindX(mainRoom, attachedRoomS, 0);
+                while (corridorLength > 0)
+                {
+                    mapArray[foundX - 1, mainRoom.Y + mainRoom.Height - 1 + corridorLength] = "A";
+                    mapArray[foundX, mainRoom.Y + mainRoom.Height - 1 + corridorLength] = "|";
+                    mapArray[foundX + 1, mainRoom.Y + mainRoom.Height - 1 + corridorLength] = "D";
+                    corridorLength--;
+
+                }
             }
             if (mainRoom.AttachedCells[3] != -1 && mainRoom.AttachedCells[3] > i)
             {
                 var attachedRoomW = map[mainRoom.AttachedCells[3]];
-                mapArray[mainRoom.X - 1, FindX(mainRoom, attachedRoomW, 1)] = "-";
+
+                var corridorLength = mainRoom.X - (attachedRoomW.X + attachedRoomW.Width);
+                var foundX = FindX(mainRoom, attachedRoomW, 1);
+                while (corridorLength > 0)
+                {
+                    mapArray[mainRoom.X - corridorLength, foundX - 1] = "W";
+                    mapArray[mainRoom.X - corridorLength, foundX] = "-";
+                    mapArray[mainRoom.X - corridorLength, foundX + 1] = "X";
+                    corridorLength--;
+                }
             }
         }
-
+        
         // the below code once again goes over the array and turns the door signal into a hole in the walls
         for (var i = 1; i < mapWidth - 1; i++)
         {
             for (var j = 1; j < mapHeight - 1; j++)
             {
-                if (mapArray[i, j].Equals("|"))
+                // walls are wdxa
+                if (mapArray[i, j].Equals("|")) // NS
                 {
                     mapArray[i, j] = "#";//hallway
-                    if (mapArray[i - 1, j].Equals("0"))
-                    {
-                        mapArray[i - 1, j] = "~";//door
-                        mapArray[i + 1, j] = "~";
-                    }
 
-                    if (mapArray[i, j - 1].Equals("0"))
+                    if (mapArray[i, j - 1].Equals("X"))
                     {
-                        mapArray[i, j - 1] = "~";//door
-                        mapArray[i, j + 1] = "~";
+                        mapArray[i, j - 1] = "I"; //wall
                     }
-                    else
+                    if (mapArray[i, j + 1].Equals("W"))
                     {
-                        mapArray[i, j - 1] = "I";//wall
-                        mapArray[i, j + 1] = "K";
+                        mapArray[i, j + 1] = "K"; //wall
                     }
                 }
-                if (mapArray[i, j].Equals("-"))
+                if (mapArray[i, j].Equals("-")) // EW
                 {
                     mapArray[i, j] = "^";//hallway
-                    if (mapArray[i - 1, j].Equals("0"))
-                    {
-                        mapArray[i - 1, j] = "~";//door
-                        mapArray[i + 1, j] = "~";
-                    }
-                    else
-                    {
-                        mapArray[i - 1, j] = "J";//wall
-                        mapArray[i + 1, j] = "M";
-                    }
 
-                    if (mapArray[i, j - 1].Equals("0"))
+                    if (mapArray[i - 1, j].Equals("D"))
                     {
-                        mapArray[i, j - 1] = "~";//door
-                        mapArray[i, j + 1] = "~";
+                        mapArray[i - 1, j] = "J";
+                    }
+                    if (mapArray[i + 1, j].Equals("A"))
+                    {
+                        mapArray[i + 1, j] = "M";
                     }
                 }
             }
@@ -339,6 +363,9 @@ internal class DungeonGenerator
             }
             sb.Append('\n');
         }
+
+        //File.WriteAllText("output.txt", sb.ToString());
+
         Console.WriteLine(sb.ToString());
     }
 }

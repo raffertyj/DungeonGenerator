@@ -6,7 +6,7 @@ namespace DungeonGenerator
     {
         static void Main(string[] args)
         {
-            var dg = new DungeonGenerator(50, 50);
+            var dg = new DungeonGenerator(200, 200);
             dg.GenerateEmptyMap();
             dg.PrintMap();
         }
